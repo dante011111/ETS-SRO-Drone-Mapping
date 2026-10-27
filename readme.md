@@ -41,7 +41,8 @@ Repositori ini dibuat untuk memenuhi tugas hierarkis berikut:
     ├── path_3d.csv
     ├── scan3d.npy
     ├── map3d.png
-    └── ...
+    ├── cloud_colored.ply
+    └── voxels_colored.ply
 ```
 
 ## 🛠️ Petunjuk Penggunaan
