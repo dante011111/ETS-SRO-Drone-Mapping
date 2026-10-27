@@ -1,85 +1,110 @@
-# Drone 3D Mapping in CoppeliaSim
+# Pemetaan 3D dengan Drone di CoppeliaSim
 
-This project demonstrates automated 3D mapping using a Quadcopter equipped with a Perspective Vision Sensor in CoppeliaSim. The drone flies autonomously over a designated area to scan geometric objects (boxes and cylinders) and generates 2D and 3D point cloud maps. The data is then post-processed to perform voxel downsampling and height-based color mapping.
+Proyek ini mendemonstrasikan pemetaan 3D otomatis menggunakan Quadcopter yang dilengkapi dengan *Perspective Vision Sensor* di CoppeliaSim. Drone ini terbang secara otonom di atas area yang telah ditentukan untuk memindai objek geometris (kotak dan silinder) dan menghasilkan peta *point cloud* 2D dan 3D. Data tersebut kemudian diproses lebih lanjut (*post-processing*) untuk melakukan *downsampling voxel* dan pewarnaan berdasarkan ketinggian objek.
 
-## 🚀 Features & Grading Criteria Addressed
+## 🚀 Fitur & Kriteria Penilaian yang Dipenuhi
 
-This repository is built to fulfill the following hierarchical tasks:
-*   **Grade C:** Autonomous drone control and flight path visualization (`--mode path`).
-*   **Grade BC:** 2D scanning using a spinning, single-row depth sensor (`--mode 2d`).
-*   **Grade B:** 3D scanning using a tilted depth camera and lawn-mower trajectory (`--mode 3d`).
-*   **Grade AB:** Point cloud optimization via voxel downsampling.
-*   **Grade A:** Post-process height color mapping (Z-axis).
+Repositori ini dibuat untuk memenuhi tugas hierarkis berikut:
 
-## 📋 Prerequisites
+* **Grade C:** Kontrol drone otonom dan visualisasi jalur penerbangan (`--mode path`).
 
-*   **Simulator:** [CoppeliaSim](https://www.coppeliarobotics.com/) (Version >= 4.5 recommended for ZMQ Remote API support).
-*   **Python 3.x**
-*   **Python Packages:**
-    ```bash
-    pip install coppeliasim-zmqremoteapi-client numpy matplotlib
-    pip install open3d  # Optional, for advanced 3D viewing
-    ```
+* **Grade BC:** Pemindaian 2D menggunakan sensor kedalaman (*depth sensor*) satu baris yang berputar (`--mode 2d`).
 
-## 📂 Repository Structure
+* **Grade B:** Pemindaian 3D menggunakan kamera kedalaman yang dimiringkan dan pola lintasan *lawn-mower* (`--mode 3d`).
+
+* **Grade AB:** Optimasi *point cloud* dengan mengurangi titik menjadi *voxel* (*voxel downsampling*).
+
+* **Grade A:** *Post-processing* pewarnaan peta berdasarkan ketinggian (Sumbu Z).
+
+## 📋 Prasyarat
+
+* **Simulator:** [CoppeliaSim](https://www.coppeliarobotics.com/) (Versi >= 4.5 direkomendasikan untuk dukungan ZMQ Remote API).
+
+* **Python 3.x**
+
+* **Paket Python:**
+
+  ```bash
+  pip install coppeliasim-zmqremoteapi-client numpy matplotlib
+  pip install open3d  # Opsional, untuk tampilan 3D tingkat lanjut
+  ```
+
+## 📂 Struktur Repositori
 
 ```text
 .
-├── ETS Mapping.ttt       # The main CoppeliaSim scene file
-├── drone_mapping.py      # The Python script to control the drone and acquire depth data
-├── postprocess.py        # The Python script to filter, voxelize, and plot the map
-├── README.md             # Project documentation
-└── output/               # Auto-generated folder for point clouds and plots
+├── ETS Mapping.ttt       # File scene utama CoppeliaSim
+├── drone_mapping.py      # Skrip Python untuk mengontrol drone dan mengambil data kedalaman
+├── postprocess.py        # Skrip Python untuk menyaring, membuat voxel, dan memplot peta
+├── README.md             # Dokumentasi proyek
+└── output/               # Folder otomatis untuk point cloud dan plot
     ├── path_3d.csv
     ├── scan3d.npy
     ├── map3d.png
     └── ...
 ```
 
-## 🛠️ Usage Instructions
+## 🛠️ Petunjuk Penggunaan
 
-### 1. Preparing the Simulation
-1. Open **CoppeliaSim**.
-2. Load the scene file: `File` > `Open scene...` > Select `ETS Mapping.ttt`.
-3. *Note: Ensure there are no lingering, incorrectly configured sensors (like Spherical Vision sensors) attached to the drone. The script will automatically generate the correct Perspective Depth Sensor upon execution.*
+### 1. Menyiapkan Simulasi
 
-### 2. Running the Data Acquisition (Flight & Scanning)
-Open your terminal in the project directory and run the mapping script. **Do not stop the simulation manually**; let the script finish the trajectory and print `[done]` to ensure the data is saved successfully.
+1. Buka **CoppeliaSim**.
 
-*   **For full 3D Mapping (Grade B):**
-    ```bash
-    python drone_mapping.py --mode 3d
-    ```
-*   **For 2D Mapping (Grade BC):**
-    ```bash
-    python drone_mapping.py --mode 2d
-    ```
-*   **For Path Visualization only (Grade C):**
-    ```bash
-    python drone_mapping.py --mode path
-    ```
-*(Data will be saved as `.npy` and `.csv` files inside the `output/` directory).*
+2. Muat file *scene*: `File` > `Open scene...` > Pilih `ETS Mapping.ttt`.
 
-### 3. Post-Processing & Visualization
-Once the flight is complete, process the generated raw data to create the final maps.
+3. *Catatan: Pastikan tidak ada sensor yang salah konfigurasi (seperti Spherical Vision Sensor) yang menempel pada drone. Skrip akan secara otomatis membuat Perspective Depth Sensor yang benar saat dijalankan.*
 
-*   **Voxel Downsampling & Height Coloring (Grades AB & A):**
-    ```bash
-    python postprocess.py --mode 3d --voxel 0.15
-    ```
-    This command cleans the data, downsamples the point cloud into 0.15m voxels, colors them based on height, and displays a 3D matplotlib plot along with the drone's flight path.
+### 2. Menjalankan Pengambilan Data (Penerbangan & Pemindaian)
 
-*   **View 2D Scan Data:**
-    ```bash
-    python postprocess.py --mode 2d
-    ```
+Buka terminal Anda di direktori proyek dan jalankan skrip pemetaan. **Jangan hentikan simulasi secara manual**; biarkan skrip menyelesaikan lintasannya dan mencetak `[done]` di terminal untuk memastikan data berhasil disimpan.
 
-*   **Advanced Viewing (Open3D):**
-    If you have `open3d` installed, you can use the `--o3d` flag for a more interactive 3D environment:
-    ```bash
-    python postprocess.py --mode 3d --voxel 0.15 --o3d
-    ```
+* **Untuk Pemetaan 3D Penuh (Grade B):**
 
-## ⚠️ Troubleshooting
-*   **Empty Data/Missing Points:** If your `scan3d.npy` is missing or not updating, make sure `sim.getVisionSensorDepth(sensor, 0)` is using `0` as the second argument in `drone_mapping.py` to return normalized data instead of absolute metric distances.
-*   **Mirrored Map:** If the generated 3D plot looks flipped compared to the CoppeliaSim scene, toggle `FLIP_U = True` or `FLIP_V = True` at the top of `drone_mapping.py` and run the simulation again.
+  ```bash
+  python drone_mapping.py --mode 3d
+  ```
+
+* **Untuk Pemetaan 2D (Grade BC):**
+
+  ```bash
+  python drone_mapping.py --mode 2d
+  ```
+
+* **Hanya untuk Visualisasi Jalur (Grade C):**
+
+  ```bash
+  python drone_mapping.py --mode path
+  ```
+
+*(Data akan disimpan sebagai file `.npy` dan `.csv` di dalam direktori `output/`).*
+
+### 3. Post-Processing & Visualisasi
+
+Setelah penerbangan selesai, proses data mentah yang dihasilkan untuk membuat peta akhir.
+
+* **Voxel Downsampling & Pewarnaan Ketinggian (Grade AB & A):**
+
+  ```bash
+  python postprocess.py --mode 3d --voxel 0.15
+  ```
+
+  Perintah ini membersihkan data, menyusutkan *point cloud* ke dalam *voxel* berukuran 0.15m, mewarnainya berdasarkan ketinggian, dan menampilkan plot matplotlib 3D beserta jalur terbang drone.
+
+* **Melihat Data Pindai 2D:**
+
+  ```bash
+  python postprocess.py --mode 2d
+  ```
+
+* **Tampilan Tingkat Lanjut (Open3D):**
+  Jika Anda telah menginstal `open3d`, Anda dapat menggunakan flag `--o3d` untuk lingkungan 3D yang lebih interaktif:
+
+  ```bash
+  python postprocess.py --mode 3d --voxel 0.15 --o3d
+  ```
+
+## ⚠️ Pemecahan Masalah (Troubleshooting)
+
+* **Data Kosong/Titik Hilang:** Jika file `scan3d.npy` Anda hilang atau tidak diperbarui, pastikan `sim.getVisionSensorDepth(sensor, 0)` menggunakan angka `0` sebagai argumen kedua di dalam `drone_mapping.py` untuk mengembalikan data yang dinormalisasi, bukan jarak metrik absolut.
+
+* **Peta Terbalik (Mirrored):** Jika plot 3D yang dihasilkan terlihat terbalik dibandingkan dengan scene di CoppeliaSim, ubah `FLIP_U = True` atau `FLIP_V = True` di bagian atas file `drone_mapping.py` lalu jalankan simulasinya lagi.
