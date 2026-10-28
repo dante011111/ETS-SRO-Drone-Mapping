@@ -134,16 +134,10 @@ def build_scene(sim):
 
 
 def make_sensor(sim, drone):
-    h = find(sim, ["/mapping_sensor"])
-    if h is not None:
-        return h
-    # options: bit0 = explicit handling, bit1 = perspective mode
-    h = sim.createVisionSensor(
-        3, [RES, RES, 0, 0],
-        [NEAR, FAR, FOV, 0.08, 0.08, 0.08, 0, 0, 0, 0, 0])
-    sim.setObjectAlias(h, "mapping_sensor")
-    sim.setObjectParent(h, drone, True)
-    print("[scene] created vision sensor 'mapping_sensor' on the drone")
+    h = find(sim, ["/mapping_sensor", "/Quadcopter/mapping_sensor", "mapping_sensor"])
+    if h is None:
+        raise RuntimeError("Sensor tidak ditemukan. Buat Vision Sensor di CoppeliaSim dan beri nama 'mapping_sensor'.")
+    print("[scene] menggunakan vision sensor 'mapping_sensor' dari CoppeliaSim")
     return h
 
 
